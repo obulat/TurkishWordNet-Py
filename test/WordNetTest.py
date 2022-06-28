@@ -3,6 +3,8 @@ import unittest
 from Dictionary.Pos import Pos
 
 from WordNet.WordNet import WordNet
+from WordNet.InterlingualDependencyType import InterlingualDependencyType
+from WordNet.SemanticRelationType import SemanticRelationType
 
 
 class WordNetTest(unittest.TestCase):
@@ -157,6 +159,53 @@ class WordNetTest(unittest.TestCase):
         self.assertEquals(15, len(self.turkish.findPathToRoot(self.turkish.getSynSetWithId("TUR10-0178450"))))
         self.assertEquals(16, len(self.turkish.findPathToRoot(self.turkish.getSynSetWithId("TUR10-0600460"))))
         self.assertEquals(17, len(self.turkish.findPathToRoot(self.turkish.getSynSetWithId("TUR10-0656390"))))
+
+    def test_SynSet(self):
+        syn_set = self.turkish.getSynSetWithLiteral("merkez", 1)
+        expected = {
+            "id": "TUR10-0536910",
+            "definition": "Bir ülkenin, bölgenin veya kuruluşun yönetim yeri",
+            "representative": "merkez",
+            "example": "Hükümet merkezi",
+            # "bcs": 1,
+            "pos": Pos.NOUN,
+            # "note": "note",
+            "wiki_page": None,
+            "relation_type": InterlingualDependencyType.SYNONYM,
+            "interlingual": ['ENG31-03509867-n', 'ENG31-08665520-n'],
+            "relation_size": 15,
+            "synonym_name": "merkez",
+            "synonym_sense": 1,
+        }
+        actual = {
+            "id": syn_set.getId(),
+            "definition": syn_set.getDefinition(),
+            "representative": syn_set.representative(),
+            "example": syn_set.getExample(),
+            "pos": syn_set.getPos(),
+            "wiki_page": syn_set.getWikiPage(),
+            "relation_type": syn_set.getRelation(0).getType(),
+            "interlingual": syn_set.getInterlingual(),
+            "relation_size": syn_set.relationSize(),
+            "synonym_name": syn_set.getSynonym().getLiteral(0).getName(),
+            "synonym_sense": syn_set.getSynonym().getLiteral(0).getSense(),
+        }
+        self.assertEqual(expected["id"], actual["id"])
+        self.assertEqual(expected["definition"], actual["definition"])
+        self.assertEqual(expected["representative"], actual["representative"])
+        self.assertEqual(expected["example"], actual["example"])
+        # BCS is not initialized in SynSet
+        # self.assertEqual(expected["bcs"], actual["bcs"])
+        self.assertEqual(expected["pos"], actual["pos"])
+        # Note is not initialized in SynSet
+        # self.assertEqual(expected["note"], actual["note"])
+        self.assertEqual(expected["wiki_page"], actual["wiki_page"])
+        self.assertEqual(expected["relation_type"], actual["relation_type"])
+        self.assertEqual(expected["interlingual"], actual["interlingual"])
+        self.assertEqual(expected["relation_size"], actual["relation_size"])
+        self.assertEqual(expected["synonym_name"], actual["synonym_name"])
+        self.assertEqual(expected["synonym_sense"], actual["synonym_sense"])
+        self.assertTrue(syn_set.containsRelationType(SemanticRelationType.HYPERNYM))
 
 
 if __name__ == '__main__':
